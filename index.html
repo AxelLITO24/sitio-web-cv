@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV Interactivo | Axel Rübenacker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Cream and Slate -->
+    <!-- Application Structure Plan: Se diseñó una SPA de desplazamiento vertical con secciones temáticas claras: Inicio, Sobre Mí, Habilidades (interactivo), Experiencia, Formación y Contacto. Esta estructura cuenta una historia coherente, guiando al usuario desde una visión general hasta los detalles específicos. La sección de Habilidades interactivas es el punto focal para el engagement, permitiendo a los reclutadores filtrar y explorar las competencias más relevantes para ellos. Se eligió esta arquitectura por ser intuitiva, moderna y eficaz para presentar un perfil profesional de forma dinámica. -->
+    <!-- Visualization & Content Choices: 
+        - Resumen Profesional -> Informar -> Bloque de texto destacado -> El texto principal para dar contexto inicial.
+        - Habilidades -> Comparar/Organizar -> Gráfico Radar de Chart.js y Filtros de texto con JS -> El gráfico ofrece una visión holística y visual de las áreas de competencia. Los filtros permiten una exploración detallada por categoría (Marketing, Datos, etc.), mejorando la usabilidad. Justificación: Transforma una lista estática en una herramienta de descubrimiento interactiva.
+        - Experiencia -> Cambio/Informar -> Línea de tiempo vertical (HTML/CSS) -> Presentación cronológica e intuitiva de la carrera profesional.
+        - Formación y Cursos -> Organizar -> Tarjetas (HTML/CSS) -> Diseño limpio y escaneable para información educativa.
+        - Contacto -> Informar -> Iconos y enlaces -> Facilita la acción de contactar.
+        - Library/Method: Chart.js (Canvas) para el gráfico; Vanilla JS para la interactividad de los filtros; Tailwind CSS para toda la maquetación y el diseño. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fdfbf7;
+            color: #334155;
+        }
+        .nav-link {
+            transition: color 0.3s;
+        }
+        .nav-link:hover {
+            color: #3b82f6;
+        }
+        .skill-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .skill-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: -2.375rem;
+            width: 1.25rem;
+            height: 1.25rem;
+            border-radius: 9999px;
+            background-color: #f0f0f0;
+            border: 4px solid #3b82f6;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header & Navigation -->
+    <header class="bg-transparent p-4 fixed w-full z-10 backdrop-blur-sm">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="text-xl font-bold text-slate-700">AR</div>
+            <nav class="hidden md:flex space-x-6">
+                <a href="#about" class="nav-link text-slate-600 font-medium">Sobre Mí</a>
+                <a href="#skills" class="nav-link text-slate-600 font-medium">Habilidades</a>
+                <a href="#experience" class="nav-link text-slate-600 font-medium">Experiencia</a>
+                <a href="#education" class="nav-link text-slate-600 font-medium">Formación</a>
+                <a href="#contact" class="nav-link text-slate-600 font-medium">Contacto</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+       <section id="hero" class="min-h-screen flex items-center justify-center text-center px-4 pt-16 relative overflow-hidden" style="background: url('fondo.jpg') center/cover no-repeat;">
+    <div class="absolute inset-0 bg-white bg-opacity-70"></div>
+    <div class="max-w-4xl relative z-10">
+        <h1 class="text-4xl md:text-6xl font-bold text-slate-800 leading-tight">Axel Rübenacker</h1>
+        <p class="mt-4 text-xl md:text-2xl text-slate-600">Estudiante de Lic. en Negocios Digitales en UADE</p>
+        <p class="mt-2 text-lg text-slate-500">Inteligencia artificial y Análisis de Datos</p>
+        <div class="mt-8 flex flex-wrap justify-center items-center space-x-6">
+            <a href="mailto:axelrubenacker46@gmail.com" class="flex items-center text-slate-600 hover:text-blue-500 transition-colors duration-300">
+                <svg class="w-6 h-6 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                axelrubenacker46@gmail.com
+            </a>
+            <a href="https://wa.me/5492804191505" target="_blank" class="flex items-center text-slate-600 hover:text-green-500 transition-colors duration-300">
+                <svg class="w-6 h-6 mr-1" fill="currentColor" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M16 3C8.268 3 2 9.268 2 17c0 2.389.627 4.63 1.813 6.646L2.05 29.95a1 1 0 001.237 1.237l6.304-1.763A13.001 13.001 0 0016 31c7.732 0 14-6.268 14-14S23.732 3 16 3zm0 24c-2.021 0-3.98-.523-5.7-1.51l-.406-.23-3.74 1.047 1.047-3.74-.23-.406A10.97 10.97 0 014 17c0-6.627 5.373-12 12-12s12 5.373 12 12-5.373 12-12 12zm6.01-7.19c-.33-.165-1.95-.963-2.25-1.073-.3-.11-.52-.165-.74.165-.22.33-.85 1.073-1.04 1.293-.19.22-.38.247-.7.082-.33-.165-1.39-.513-2.65-1.635-.98-.872-1.64-1.947-1.83-2.277-.19-.33-.02-.508.145-.673.15-.15.33-.39.495-.585.165-.195.22-.33.33-.55.11-.22.055-.413-.027-.578-.082-.165-.74-1.78-1.02-2.43-.27-.62-.55-.535-.74-.545-.19-.008-.413-.008-.637-.008-.22 0-.577.082-.88.412-.303.33-1.18 1.14-1.18 2.776 0 1.636 1.21 3.22 1.38 3.44.165.22 2.41 3.82 5.85 5.19.82.33 1.46.527 1.96.673.82.26 1.57.223 2.16.135.66-.098 2.02-.825 2.31-1.62.29-.795.29-1.47.23-1.62-.06-.15-.24-.24-.5-.36z"/></svg>
+                WhatsApp
+            </a>
+            <a href="https://github.com/AxelLITO24" target="_blank" class="flex items-center text-slate-600 hover:text-black transition-colors duration-300">
+    <svg class="w-6 h-6 mr-1" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M12 .5C5.73.5.5 5.73.5 12.27c0 5.21 3.44 9.63 8.21 11.19.6.11.82-.26.82-.58v-2.04c-3.34.73-4.04-1.61-4.04-1.61-.55-1.41-1.35-1.78-1.35-1.78-1.11-.76.08-.75.08-.75 1.22.09 1.86 1.27 1.86 1.27 1.09 1.86 2.85 1.32 3.55 1.01.11-.8.43-1.32.77-1.62-2.66-.3-5.47-1.33-5.47-5.94 0-1.31.47-2.39 1.24-3.24-.13-.3-.54-1.53.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 013.01-.4c1.02.01 2.05.14 3.01.4 2.28-1.55 3.3-1.23 3.3-1.23.66 1.65.25 2.88.12 3.18.77.85 1.24 1.93 1.24 3.24 0 4.62-2.81 5.63-5.48 5.93.44.38.82 1.13.82 2.29v3.4c0 .32.22.69.83.57C20.57 21.9 24 17.48 24 12.27 24 5.73 18.77.5 12 .5z"/>
+    </svg>GitHub
+</a>
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+            </a>
+            <span class="text-slate-600 flex items-center">
+                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                Palermo, Buenos Aires
+            </span>
+        </div>
+    </div>
+</section>
+        <!-- About Section -->
+      <section id="about" class="py-20 lg:py-32 px-4 bg-white">
+    <div class="container mx-auto max-w-5xl grid md:grid-cols-2 gap-12 items-center">
+        <div class="w-full max-w-sm mx-auto">
+            <img src="Foto_cv.jpg" alt="Foto de perfil de Axel Rubenacker" class="rounded-full shadow-lg mx-auto">
+        </div>
+        <div class="text-center md:text-left">
+            <h2 class="text-3xl font-bold text-slate-800 mb-6">Resumen Profesional</h2>
+            <p class="text-lg text-slate-600 leading-relaxed">
+                Estudiante de segundo año de la Licenciatura en Management con orientación en Negocios Digitales en UADE, con un fuerte interés en el marketing y el análisis de datos. Cuento con experiencia práctica en la creación y ejecución de planes de marketing digital y poseo certificaciones en Community Management y Publicidad. Actualmente expandiendo mis habilidades a través de un curso de Data Analytics. Busco activamente una pasantía donde pueda aplicar mis conocimientos, mi proactividad y mi compromiso para aportar valor y crecer profesionalmente.
+            </p>
+        </div>
+    </div>
+</section>
+
+        <!-- Skills Section -->
+        <section id="skills" class="py-20 lg:py-32 px-4">
+            <div class="container mx-auto">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold text-slate-800">Habilidades Técnicas</h2>
+                    <p class="mt-2 text-lg text-slate-500">Un vistazo a mis competencias. Haz clic en las categorías para ver el detalle.</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div class="chart-container relative w-full max-w-lg mx-auto h-80 md:h-96">
+                        <canvas id="skillsChart"></canvas>
+                    </div>
+                    <div>
+                        <div class="flex flex-wrap justify-center md:justify-start gap-2 mb-6">
+                            <button data-skill="marketing" class="skill-btn bg-blue-100 text-blue-800 py-2 px-4 rounded-full font-semibold">Marketing Digital</button>
+                            <button data-skill="data" class="skill-btn bg-gray-200 text-gray-800 py-2 px-4 rounded-full font-semibold">Análisis de Datos</button>
+                            <button data-skill="software" class="skill-btn bg-gray-200 text-gray-800 py-2 px-4 rounded-full font-semibold">Software y Diseño</button>
+                            <button data-skill="dev" class="skill-btn bg-gray-200 text-gray-800 py-2 px-4 rounded-full font-semibold">Desarrollo Básico</button>
+                        </div>
+                        <div id="skill-details" class="space-y-4">
+                            <div class="skill-detail" data-skill-content="marketing">
+                                <h3 class="text-xl font-semibold text-slate-700 mb-2">Marketing Digital</h3>
+                                <ul class="list-disc list-inside text-slate-600 space-y-1">
+                                    <li>Estrategia de Marketing Digital</li>
+                                    <li>Community Management y Publicidad</li>
+                                    <li>Análisis de Métricas y Resultados de Campañas</li>
+                                    <li>Gestión de comunidad online</li>
+                                </ul>
+                            </div>
+                            <div class="skill-detail hidden" data-skill-content="data">
+                                <h3 class="text-xl font-semibold text-slate-700 mb-2">Análisis de Datos</h3>
+                                <ul class="list-disc list-inside text-slate-600 space-y-1">
+                                    <li>Tableau para Visualización de Datos</li>
+                                    <li>Power BI</li>
+                                    <li>Microsoft Excel (Avanzado)</li>
+                                    <li>Python para análisis de datos</li>
+                                </ul>
+                            </div>
+                             <div class="skill-detail hidden" data-skill-content="software">
+                                <h3 class="text-xl font-semibold text-slate-700 mb-2">Software y Herramientas de Diseño</h3>
+                                <ul class="list-disc list-inside text-slate-600 space-y-1">
+                                    <li>Microsoft Office Suite (Word, Excel, PowerPoint, Outlook)</li>
+                                    <li>Adobe Photoshop</li>
+                                    <li>Adobe Illustrator (Básico)</li>
+                                    <li>Microsoft Publisher</li>
+                                </ul>
+                            </div>
+                            <div class="skill-detail hidden" data-skill-content="dev">
+                                <h3 class="text-xl font-semibold text-slate-700 mb-2">Desarrollo Básico</h3>
+                                <ul class="list-disc list-inside text-slate-600 space-y-1">
+                                    <li>HTML</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Experience Section -->
+        <section id="experience" class="py-20 lg:py-32 px-4 bg-white">
+            <div class="container mx-auto max-w-3xl">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold text-slate-800">Experiencia Profesional</h2>
+                </div>
+                <div class="relative pl-10 border-l-2 border-slate-200">
+                    <div class="timeline-item mb-12">
+                        <h3 class="text-xl font-semibold text-slate-800">Analista de Marketing Jr. (Contrato)</h3>
+                        <p class="font-medium text-slate-600">Ualan Tour - Puerto Madryn, Chubut</p>
+                        <p class="text-sm text-slate-500 mb-3">Abril 2023 – Presente</p>
+                        <ul class="list-disc list-inside text-slate-600 space-y-1">
+                           <li>Desarrollo e implementación de plan de marketing digital integral.</li>
+                           <li>Gestión de publicidad y comunidad online para aumentar visibilidad.</li>
+                           <li>Análisis de resultados de campañas para optimizar el rendimiento.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Education & Courses Section -->
+        <section id="education" class="py-20 lg:py-32 px-4">
+            <div class="container mx-auto">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold text-slate-800">Educación y Formación</h2>
+                    <p class="mt-2 text-lg text-slate-500">Mi trayectoria académica y de aprendizaje continuo.</p>
+                </div>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                    <div class="skill-card bg-white p-6 rounded-lg shadow-sm">
+                        <h3 class="font-semibold text-lg text-slate-800">Lic. en Management (Negocios Digitales)</h3>
+                        <p class="text-slate-600">Universidad Argentina de la Empresa (UADE)</p>
+                        <p class="text-sm text-slate-500 mt-1">2023 – Presente (2º año)</p>
+                    </div>
+                    <div class="skill-card bg-white p-6 rounded-lg shadow-sm">
+                        <h3 class="font-semibold text-lg text-slate-800">Data Analytics</h3>
+                        <p class="text-slate-600">Digital House</p>
+                        <p class="text-sm text-slate-500 mt-1">Cursando actualmente</p>
+                    </div>
+                    <div class="skill-card bg-white p-6 rounded-lg shadow-sm cursor-pointer" id="show-coder-digital">
+                        <h3 class="font-semibold text-lg text-slate-800">Marketing Digital: CM y Publicidad</h3>
+                        <p class="text-slate-600">Coderhouse</p>
+                        <p class="text-sm text-slate-500 mt-1">Finalizado (4 meses)</p>
+                    </div>
+                    <div class="skill-card bg-white p-6 rounded-lg shadow-sm cursor-pointer" id="show-tableau-coder">
+                    <h3 class="font-semibold text-lg text-slate-800">Tableau para Visualización de Datos</h3>
+                    <p class="text-slate-600">Coderhouse</p>
+                    <p class="text-sm text-slate-500 mt-1">Finalizado (4 meses)</p>
+                </div>
+                    <div class="skill-card bg-white p-6 rounded-lg shadow-sm">
+                        <h3 class="font-semibold text-lg text-slate-800">Power BI</h3>
+                        <p class="text-slate-600">Autodidacta / Cursos online</p>
+                        <p class="text-sm text-slate-500 mt-1">Finalizado (4 meses)</p>
+                    </div>
+                    <div class="skill-card bg-white p-6 rounded-lg shadow-sm">
+                        <h3 class="font-semibold text-lg text-slate-800">Python</h3>
+                        <p class="text-slate-600">Autodidacta / Cursos online</p>
+                        <p class="text-sm text-slate-500 mt-1">Finalizado (30 meses)</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+     <footer id="contact" class="bg-slate-800 text-white py-16 px-4">
+    <div class="container mx-auto text-center">
+        <h2 class="text-3xl font-bold mb-4">Contactemos</h2>
+        <p class="max-w-xl mx-auto mb-8">
+            Estoy buscando activamente oportunidades de pasantía. Si mi perfil encaja con sus necesidades, no dude en contactarme.
+        </p>
+       <a href="mailto:axelrubenacker46@gmail.com" target="_blank" rel="noopener" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-full transition-colors duration-300 inline-flex items-center justify-center">
+    <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+    Enviar un mail
+</a>
+        <div class="mt-8 text-slate-400 text-sm">
+            <p>Diseño Interactivo de CV | 2024</p>
+        </div>
+    </div>
+</footer>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Chart.js Radar Chart
+            const ctx = document.getElementById('skillsChart').getContext('2d');
+            const skillsData = {
+                labels: ['Marketing Digital', 'Análisis de Datos', 'Software y Diseño', 'Desarrollo Básico'],
+                datasets: [{
+                    label: 'Áreas de Competencia',
+                    data: [4, 4, 4, 1],
+                    backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                    borderColor: 'rgba(59, 130, 246, 1)',
+                    pointBackgroundColor: 'rgba(59, 130, 246, 1)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgba(59, 130, 246, 1)',
+                    borderWidth: 2
+                }]
+            };
+
+            const config = {
+                type: 'radar',
+                data: skillsData,
+                options: {
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            },
+                            pointLabels: {
+                                font: {
+                                    size: 12,
+                                    weight: 'bold'
+                                },
+                                color: '#334155'
+                            },
+                            ticks: {
+                                backdropColor: 'transparent',
+                                stepSize: 1,
+                                display: false
+                            },
+                            min: 0,
+                            max: 5
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                             enabled: false
+                        }
+                    }
+                }
+            };
+
+            new Chart(ctx, config);
+            
+            // Skill filter logic
+            const skillBtns = document.querySelectorAll('.skill-btn');
+            const skillDetails = document.querySelectorAll('.skill-detail');
+
+            skillBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const skillToShow = btn.dataset.skill;
+
+                    // Update button styles
+                    skillBtns.forEach(b => {
+                        b.classList.remove('bg-blue-100', 'text-blue-800');
+                        b.classList.add('bg-gray-200', 'text-gray-800');
+                    });
+                    btn.classList.add('bg-blue-100', 'text-blue-800');
+                    btn.classList.remove('bg-gray-200', 'text-gray-800');
+
+                    // Show/hide skill details
+                    skillDetails.forEach(detail => {
+                        if (detail.dataset.skillContent === skillToShow) {
+                            detail.classList.remove('hidden');
+                        } else {
+                            detail.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+        });
+    
+    </script>
+
+<!-- MODAL PARA CERTIFICADOS -->
+<div id="imageModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 hidden">
+  <div class="relative max-w-3xl w-full px-4">
+    <button id="closeModal" class="absolute top-2 right-4 text-white text-3xl font-bold">&times;</button>
+    <img id="modalImage" src="" alt="Certificado" class="w-full h-auto rounded shadow-lg mt-8">
+  </div>
+</div>
+
+<script>
+  document.getElementById('show-coder-digital').addEventListener('click', () => {
+      document.getElementById('modalImage').src = 'coder_digital_m.jpg';
+      document.getElementById('imageModal').classList.remove('hidden');
+  });
+
+  document.getElementById('show-tableau-coder').addEventListener('click', () => {
+      document.getElementById('modalImage').src = 'tabelu_coder.jpg';
+      document.getElementById('imageModal').classList.remove('hidden');
+  });
+
+  document.getElementById('closeModal').addEventListener('click', () => {
+      document.getElementById('imageModal').classList.add('hidden');
+      document.getElementById('modalImage').src = '';
+  });
+</script>
+
+</body>
+</html>
